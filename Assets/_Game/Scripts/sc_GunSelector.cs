@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
+//[ExecuteInEditMode]
 public class sc_GunSelector : MonoBehaviour
 {
     [SerializeField] private sc_GunType Gun;

@@ -10,9 +10,12 @@ public class sc_PlayerAction : MonoBehaviour
 
     private void Update()
     {
-        if(Mouse.current.leftButton.isPressed && GunSelector.ActiveGun != null)
+        if(Mouse.current.leftButton.isPressed && GunSelector.ActiveGun != null && GunSelector.ActiveGun.ShootConfig.IsAutomatic)
         {
             GunSelector.ActiveGun.Shoot();
-        }  
+        } else if(Mouse.current.leftButton.wasPressedThisFrame && GunSelector.ActiveGun != null)
+        {
+            GunSelector.ActiveGun.Shoot();
+        }
     }
 }

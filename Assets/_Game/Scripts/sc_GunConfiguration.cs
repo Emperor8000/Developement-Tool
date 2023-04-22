@@ -6,13 +6,33 @@ using UnityEngine.Pool;
 public class sc_GunConfiguration : ScriptableObject
 {
     [Header ("Organize Visuals and Logic")]
-    public sc_GunType Type;
-    public GameObject PrefabModel;
-    public Vector3 Spawnpoint;
-    public Vector3 SpawnRotation;
 
-    public sc_ShootConfiguration ShootConfig;
-    public sc_TrailConfiguration TrailConfig;
+    [Tooltip("Set the type of weapon; Raycast/Projectile/Maybe I'll think of more???")]
+    public sc_GunType Type;
+
+    [Tooltip("Set visuals, note that the model must contain a particle system where you want it to fire from or it won't work")]
+    public GameObject PrefabModel = null;
+
+    [Space]
+    [Tooltip("Where should the weapon spawn")]
+    public Vector3 Spawnpoint = Vector3.zero;
+
+    [Tooltip("What rotation should the weapon spawn at")]
+    public Vector3 SpawnRotation = Vector3.zero;
+
+    [Space]
+    [Tooltip("Use bullet trails?")]
+    public bool UseTrail = true;
+
+    [Tooltip("Play particle effect on shoot? Note: If false, particle system still necessary in order to know where to shoot from")]
+    public bool UseParticle = true;
+
+    [Space]
+    [Tooltip("Set shoot logic")]
+    public sc_ShootConfiguration ShootConfig = null;
+
+    [Tooltip("Choose bullet trails configuration, not necessary if not using bullet trails")]
+    public sc_TrailConfiguration TrailConfig = null;
 
     private MonoBehaviour ActiveMonoBehavior;
     private GameObject Model;
@@ -20,7 +40,7 @@ public class sc_GunConfiguration : ScriptableObject
     private ParticleSystem ShootParticle;
     private ObjectPool<TrailRenderer> TrailPool;
 
-    public void Spawn(Transform Parent, MonoBehaviour ActiveMonoBehavior)
+    public void Spawn(Transform Parent, MonoBehaviour ActiveMonoBehavior) //function to spawn visuals and set initial runtime values
     {
         this.ActiveMonoBehavior = ActiveMonoBehavior;
         LastShootTime = 0;
@@ -42,22 +62,36 @@ public class sc_GunConfiguration : ScriptableObject
 
             if (ShootParticle != null) //check if particle system is not null, then play it if it is assigned
             {
-                ShootParticle.Play();
+                if (UseParticle)
+                {
+                    ShootParticle.Play();
+                }
+                
                 Vector3 shootDirection = ShootParticle.transform.forward + new Vector3(Random.Range(-ShootConfig.Spread.x, ShootConfig.Spread.x), 
                     Random.Range(-ShootConfig.Spread.y, ShootConfig.Spread.y), Random.Range(-ShootConfig.Spread.z, ShootConfig.Spread.z));
 
-                if(Physics.Raycast(ShootParticle.transform.position, shootDirection, out RaycastHit hit, float.MaxValue, ShootConfig.HitMask))
+                if(Type == sc_GunType.Raycast)
                 {
-                    ActiveMonoBehavior.StartCoroutine(PlayTrail(ShootParticle.transform.position, hit.point, hit));
+                    if (Physics.Raycast(ShootParticle.transform.position, shootDirection, out RaycastHit hit, float.MaxValue, ShootConfig.HitMask))
+                    {
+                        if (UseTrail)
+                        {
+                            ActiveMonoBehavior.StartCoroutine(PlayTrail(ShootParticle.transform.position, hit.point, hit));
+                        }
+                    }
+                    else
+                    {
+                        if (UseTrail)
+                        {
+                            ActiveMonoBehavior.StartCoroutine(PlayTrail(ShootParticle.transform.position,
+                            ShootParticle.transform.position + (shootDirection * TrailConfig.MissDistance), new RaycastHit()));
+                        }
+                    }
                 }
-                else
-                {
-                    ActiveMonoBehavior.StartCoroutine(PlayTrail(ShootParticle.transform.position, 
-                        ShootParticle.transform.position + (shootDirection * TrailConfig.MissDistance), new RaycastHit()));
-                }
+                
             }else
             {
-                Debug.Log("No Particle System Assigned");
+                Debug.Log("No particle system found");
             }
         }
     }
