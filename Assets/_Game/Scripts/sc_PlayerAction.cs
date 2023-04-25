@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 [DisallowMultipleComponent]
 public class sc_PlayerAction : MonoBehaviour
 {
-    [SerializeField] private sc_GunSelector GunSelector;
+    [SerializeField] public sc_GunSelector GunSelector;
 
     private void Update()
     {
