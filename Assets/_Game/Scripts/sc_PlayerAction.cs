@@ -17,5 +17,11 @@ public class sc_PlayerAction : MonoBehaviour
         {
             GunSelector.ActiveGun.Shoot();
         }
+
+        //function to switch weapons at runtime?
+        if (Keyboard.current.qKey.wasPressedThisFrame)
+        {
+
+        }
     }
 }

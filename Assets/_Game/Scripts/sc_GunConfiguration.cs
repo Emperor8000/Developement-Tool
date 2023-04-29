@@ -7,8 +7,8 @@ public class sc_GunConfiguration : ScriptableObject
 {
     [Header ("Organize Visuals and Logic")]
 
-    [Tooltip("Set the type of weapon; Raycast/Projectile/Maybe I'll think of more???")]
-    public sc_GunType Type;
+    [Tooltip("Give the gun a name: important, because it will be used to select weapons")]
+    public string Name;
 
     [Tooltip("Set visuals, note that the model must contain a particle system where you want it to fire from or it won't work")]
     public GameObject PrefabModel = null;
@@ -59,18 +59,18 @@ public class sc_GunConfiguration : ScriptableObject
         if(Time.time > ShootConfig.FireRate + LastShootTime)
         {
             LastShootTime = Time.time; //set now as last shoot time
-
             if (ShootParticle != null) //check if particle system is not null, then play it if it is assigned
             {
-                if (UseParticle)
+
+                if (UseParticle) //play particle effect if turned on
                 {
-                    ShootParticle.Play();
+                ShootParticle.Play();
                 }
                 
                 Vector3 shootDirection = ShootParticle.transform.forward + new Vector3(Random.Range(-ShootConfig.Spread.x, ShootConfig.Spread.x), 
                     Random.Range(-ShootConfig.Spread.y, ShootConfig.Spread.y), Random.Range(-ShootConfig.Spread.z, ShootConfig.Spread.z));
 
-                if(Type == sc_GunType.Raycast)
+                if(ShootConfig.Raycast) //function for shooting raycasts
                 {
                     if (Physics.Raycast(ShootParticle.transform.position, shootDirection, out RaycastHit hit, float.MaxValue, ShootConfig.HitMask))
                     {
@@ -86,6 +86,20 @@ public class sc_GunConfiguration : ScriptableObject
                             ActiveMonoBehavior.StartCoroutine(PlayTrail(ShootParticle.transform.position,
                             ShootParticle.transform.position + (shootDirection * TrailConfig.MissDistance), new RaycastHit()));
                         }
+                    }
+                }
+
+                if (ShootConfig.Projectile) //function for shooting projectiles
+                {
+                    GameObject projectileObject = null; //create empty variable for projectile to be instantiated
+                    
+                    if (ShootConfig.ProjectilePrefab != null && ShootParticle != null)
+                    {
+                        projectileObject = Instantiate(ShootConfig.ProjectilePrefab, ShootParticle.transform);
+                        sc_Projectile projectileLogic = projectileObject.GetComponent<sc_Projectile>();
+                        //projectileLogic._impactScript = _impact;
+                        projectileLogic._speed = ShootParticle.gameObject.transform.forward * ShootConfig.ProjectileSpeed;
+                        //projectileLogic.damageAmount = _damageAmount;
                     }
                 }
                 

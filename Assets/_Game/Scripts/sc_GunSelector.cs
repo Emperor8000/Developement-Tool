@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-//[ExecuteInEditMode]
+[ExecuteInEditMode]
 public class sc_GunSelector : MonoBehaviour
 {
-    [SerializeField] private sc_GunType Gun;
-    [SerializeField] private Transform GunParent;
-    [SerializeField] private List<sc_GunConfiguration> Guns;
+    [SerializeField] private string ActiveGunName;
+    [SerializeField] public Transform GunParent;
+    [SerializeField] public List<sc_GunConfiguration> Guns;
 
-    [Space]
-    [Header("Runtime Filled")]
+    //[Space]
+    //[Header("Runtime Filled")]
     public sc_GunConfiguration ActiveGun;
 
     private void Start()
     {
-        sc_GunConfiguration gun = Guns.Find(gun => gun.Type == Gun);
+        sc_GunConfiguration gun = Guns.Find(gun => gun.Name == ActiveGunName);
 
         if (gun == null)
         {
@@ -24,9 +24,15 @@ public class sc_GunSelector : MonoBehaviour
         }
 
         ActiveGun = gun;
+
         if (gun != null)
         {
             gun.Spawn(GunParent, this);
         }
+    }
+
+    public void SwitchWeapon(sc_GunConfiguration newActiveGun)
+    {
+        
     }
 }
