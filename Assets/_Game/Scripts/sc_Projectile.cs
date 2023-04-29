@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class sc_Projectile : MonoBehaviour
 {
-    //[SerializeField] public sc_Impact _impactScript = null;
+    public sc_Impact _impactScript = null;
+    public sc_GunConfiguration _gunConfig = null;
     public Vector3 _speed;
     public int damageAmount = 2;
     private Vector3 position;
@@ -23,11 +24,18 @@ public class sc_Projectile : MonoBehaviour
         {
             shootableObject.shoot(damageAmount);
         } 
+        
 
         if (_impactScript != null)
         {
             _impactScript.onImpact(this.transform.position);
         } */
+
+        if(_gunConfig != null)
+        {
+            StartCoroutine(_gunConfig.PlayImpact(this.transform.position));
+            Debug.Log("attempting to play particle?");
+        }
 
         this.gameObject.SetActive(false);
     }

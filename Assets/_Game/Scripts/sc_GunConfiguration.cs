@@ -34,17 +34,22 @@ public class sc_GunConfiguration : ScriptableObject
     [Tooltip("Choose bullet trails configuration, not necessary if not using bullet trails")]
     public sc_TrailConfiguration TrailConfig = null;
 
+    [Tooltip("Choose Impact Particle Configuration, used for both raycasts and projectiles")]
+    public sc_ImpactParticleConfig ImpactConfig = null;
+
     private MonoBehaviour ActiveMonoBehavior;
     private GameObject Model;
     private float LastShootTime;
     private ParticleSystem ShootParticle;
     private ObjectPool<TrailRenderer> TrailPool;
+    private ObjectPool<ParticleSystem> ImpactParticlePool;
 
     public void Spawn(Transform Parent, MonoBehaviour ActiveMonoBehavior) //function to spawn visuals and set initial runtime values
     {
         this.ActiveMonoBehavior = ActiveMonoBehavior;
         LastShootTime = 0;
         TrailPool = new ObjectPool<TrailRenderer>(CreateTrail);
+        ImpactParticlePool = new ObjectPool<ParticleSystem>(CreateParticle);
 
         Model = Instantiate(PrefabModel);
         Model.transform.SetParent(Parent, false);
@@ -97,7 +102,8 @@ public class sc_GunConfiguration : ScriptableObject
                     {
                         projectileObject = Instantiate(ShootConfig.ProjectilePrefab, ShootParticle.transform);
                         sc_Projectile projectileLogic = projectileObject.GetComponent<sc_Projectile>();
-                        //projectileLogic._impactScript = _impact;
+                        projectileLogic._gunConfig = this;
+                        
                         projectileLogic._speed = ShootParticle.gameObject.transform.forward * ShootConfig.ProjectileSpeed;
                         //projectileLogic.damageAmount = _damageAmount;
                     }
@@ -134,7 +140,7 @@ public class sc_GunConfiguration : ScriptableObject
 
         if(Hit.collider!= null)
         {
-            //I'll make this later
+            ActiveMonoBehavior.StartCoroutine(PlayImpact(Hit.transform.position));
         }
 
         yield return new WaitForSeconds(TrailConfig.Duration);
@@ -142,6 +148,22 @@ public class sc_GunConfiguration : ScriptableObject
         instance.emitting = false;
         instance.gameObject.SetActive(false);
         TrailPool.Release(instance);
+    }
+
+    public IEnumerator PlayImpact(Vector3 ImpactPoint)
+    {
+        ParticleSystem instance = ImpactParticlePool.Get();
+        instance.gameObject.SetActive(true);
+        instance.transform.position = ImpactPoint;
+        yield return null;
+        instance.Play();
+
+        yield return new WaitForSeconds(ImpactConfig.Duration);
+        
+        instance.Pause();
+        Debug.Log("Particle Paused");
+        instance.gameObject.SetActive(false);
+        ImpactParticlePool.Release(instance);
     }
 
     private TrailRenderer CreateTrail()
@@ -157,5 +179,18 @@ public class sc_GunConfiguration : ScriptableObject
         trail.emitting = false;
         trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         return trail;
+    }
+
+    private ParticleSystem CreateParticle()
+    {
+        GameObject instance = new GameObject("Impact Particle");
+        ParticleSystem particle = instance.AddComponent<ParticleSystem>();
+        var main = particle.main;
+        main.maxParticles = (int)ImpactConfig.MaxParticleNumber;
+        main.simulationSpeed = ImpactConfig.SimulationSpeed;
+        main.startColor = ImpactConfig.Color;
+        main.startSize = ImpactConfig.MaxParticleSize;
+
+        return particle;
     }
 }

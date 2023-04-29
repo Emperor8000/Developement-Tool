@@ -21,3 +21,4 @@ MonoBehaviour:
   UseParticle: 1
   ShootConfig: {fileID: 11400000, guid: 62d294bce2335c34f8db54076957e82d, type: 2}
   TrailConfig: {fileID: 0}
+  ImpactConfig: {fileID: 11400000, guid: 2bfb5d49cdaa74c4c812dfbf2722c4d8, type: 2}

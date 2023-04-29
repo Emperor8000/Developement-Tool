@@ -20,6 +20,7 @@ public class sc_TrailConfiguration : ScriptableObject
     public float MinVertexDistance = 0.1f;
     public Gradient Color;
 
+    [Tooltip("How far the trail will go if the raycast misses")]
     public float MissDistance = 100f;
 
     [Tooltip("Relative speed that the bullet trail plays at; 100 is default")]

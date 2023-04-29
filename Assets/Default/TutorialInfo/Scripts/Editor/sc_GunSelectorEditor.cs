@@ -40,13 +40,11 @@ class sc_GunSelectorEditor : Editor
         MonoBehaviour monoBev = (MonoBehaviour)target;
         ThisScript = monoBev.GetComponent<sc_GunSelector>();
         sc_PlayerAction playerAction = monoBev.GetComponent<sc_PlayerAction>();
-        sc_Impact ImpactSystem = null;
 
         if (GUILayout.Button("Implement") && playerAction == null)
         {
             Debug.Log("It's alive: " + target.name);
             playerAction = monoBev.gameObject.AddComponent<sc_PlayerAction>();
-            ImpactSystem = monoBev.gameObject.AddComponent<sc_Impact>();
             playerAction.GunSelector = ThisScript;
 
 
