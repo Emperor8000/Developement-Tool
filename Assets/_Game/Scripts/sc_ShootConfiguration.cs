@@ -19,6 +19,9 @@ public class sc_ShootConfiguration : ScriptableObject
     [Tooltip("If the weapon shoots projectiles, set the speed of projectiles here")]
     public float ProjectileSpeed = 20;
 
+    [Tooltip("How many seconds will the projectile exist if it doesn't hit anything?")]
+    public float ProjectileMissDuration = 20;
+
     [Space]
     [Tooltip("What layer you want this weapon to hit (only affects raycasts)")]
     public LayerMask HitMask;

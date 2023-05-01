@@ -34,8 +34,8 @@ public class sc_GunConfiguration : ScriptableObject
     [Tooltip("Choose bullet trails configuration, not necessary if not using bullet trails")]
     public sc_TrailConfiguration TrailConfig = null;
 
-    [Tooltip("Choose Impact Particle Configuration, used for both raycasts and projectiles")]
-    public sc_ImpactParticleConfig ImpactConfig = null;
+    [Tooltip("Enter a prefab for an impact particle to be spawned upon impact (affects both raycasts and projectiles)")]
+    public GameObject ImpactConfig = null;
 
     private MonoBehaviour ActiveMonoBehavior;
     private GameObject Model;
@@ -43,6 +43,7 @@ public class sc_GunConfiguration : ScriptableObject
     private ParticleSystem ShootParticle;
     private ObjectPool<TrailRenderer> TrailPool;
     private ObjectPool<ParticleSystem> ImpactParticlePool;
+    private ObjectPool<GameObject> ProjectilePool;
 
     public void Spawn(Transform Parent, MonoBehaviour ActiveMonoBehavior) //function to spawn visuals and set initial runtime values
     {
@@ -50,6 +51,7 @@ public class sc_GunConfiguration : ScriptableObject
         LastShootTime = 0;
         TrailPool = new ObjectPool<TrailRenderer>(CreateTrail);
         ImpactParticlePool = new ObjectPool<ParticleSystem>(CreateParticle);
+        ProjectilePool = new ObjectPool<GameObject>(CreateProjectile);
 
         Model = Instantiate(PrefabModel);
         Model.transform.SetParent(Parent, false);
@@ -95,15 +97,17 @@ public class sc_GunConfiguration : ScriptableObject
                 }
 
                 if (ShootConfig.Projectile) //function for shooting projectiles
-                {
-                    GameObject projectileObject = null; //create empty variable for projectile to be instantiated
-                    
+                {   
                     if (ShootConfig.ProjectilePrefab != null && ShootParticle != null)
                     {
-                        projectileObject = Instantiate(ShootConfig.ProjectilePrefab, ShootParticle.transform);
-                        sc_Projectile projectileLogic = projectileObject.GetComponent<sc_Projectile>();
-                        projectileLogic._gunConfig = this;
-                        
+                        GameObject instance = ProjectilePool.Get(); //get a projectile and set it active
+                        instance.transform.position = ShootParticle.transform.position;
+                        instance.gameObject.SetActive(true);
+
+                        sc_Projectile projectileLogic = instance.GetComponent<sc_Projectile>(); //get the projectile script from the projectile
+                        projectileLogic._gunConfig = this; //give it this script for impact purposes
+                        projectileLogic.SetStuff(ShootConfig.ProjectileMissDuration);
+
                         projectileLogic._speed = ShootParticle.gameObject.transform.forward * ShootConfig.ProjectileSpeed;
                         //projectileLogic.damageAmount = _damageAmount;
                     }
@@ -150,19 +154,20 @@ public class sc_GunConfiguration : ScriptableObject
         TrailPool.Release(instance);
     }
 
-    public IEnumerator PlayImpact(Vector3 ImpactPoint)
+    private IEnumerator PlayImpact(Vector3 ImpactPoint)
     {
         ParticleSystem instance = ImpactParticlePool.Get();
-        instance.gameObject.SetActive(true);
         instance.transform.position = ImpactPoint;
+        instance.gameObject.SetActive(true);
         yield return null;
-        instance.Play();
 
-        yield return new WaitForSeconds(ImpactConfig.Duration);
-        
-        instance.Pause();
-        Debug.Log("Particle Paused");
+        while (instance.particleCount > 0)
+        {
+            yield return null;
+        }
+       
         instance.gameObject.SetActive(false);
+        Debug.Log("Instance Deactivated");
         ImpactParticlePool.Release(instance);
     }
 
@@ -181,16 +186,28 @@ public class sc_GunConfiguration : ScriptableObject
         return trail;
     }
 
+    public void startImpact(Vector3 StartPoint)
+    {
+        ActiveMonoBehavior.StartCoroutine(PlayImpact(StartPoint));
+    }
+
     private ParticleSystem CreateParticle()
     {
-        GameObject instance = new GameObject("Impact Particle");
-        ParticleSystem particle = instance.AddComponent<ParticleSystem>();
-        var main = particle.main;
-        main.maxParticles = (int)ImpactConfig.MaxParticleNumber;
-        main.simulationSpeed = ImpactConfig.SimulationSpeed;
-        main.startColor = ImpactConfig.Color;
-        main.startSize = ImpactConfig.MaxParticleSize;
+        GameObject instance = Instantiate(ImpactConfig);
+        ParticleSystem particle = instance.GetComponent<ParticleSystem>();
 
         return particle;
     }
+    private GameObject CreateProjectile()
+    {
+        GameObject instance = Instantiate(ShootConfig.ProjectilePrefab);
+        return instance;
+    }
+
+    public void ReturnProjectile(GameObject instance)
+    {
+        instance.gameObject.SetActive(false);
+        ProjectilePool.Release(instance);
+    }
+
 }

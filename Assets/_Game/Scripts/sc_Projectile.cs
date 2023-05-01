@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class sc_Projectile : MonoBehaviour
 {
-    public sc_Impact _impactScript = null;
     public sc_GunConfiguration _gunConfig = null;
     public Vector3 _speed;
     public int damageAmount = 2;
-    private Vector3 position;
+    public Vector3 position;
+    public float missDuration;
+    public float remainingDuration;
 
-    private void Start()
+    public void SetStuff(float Duration)
     {
+        missDuration = Duration;
         position = this.transform.position;
+        remainingDuration = missDuration;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -24,24 +27,25 @@ public class sc_Projectile : MonoBehaviour
         {
             shootableObject.shoot(damageAmount);
         } 
-        
-
-        if (_impactScript != null)
-        {
-            _impactScript.onImpact(this.transform.position);
-        } */
+        */
 
         if(_gunConfig != null)
         {
-            StartCoroutine(_gunConfig.PlayImpact(this.transform.position));
-            Debug.Log("attempting to play particle?");
+            _gunConfig.startImpact(this.transform.position);
+            _gunConfig.ReturnProjectile(this.gameObject);
+            Debug.Log("attempting to trigger impact");
         }
-
-        this.gameObject.SetActive(false);
     }
 
     private void Update()
     {
+        remainingDuration -= Time.deltaTime;
+
+        if(remainingDuration <= 0)
+        {
+            _gunConfig.ReturnProjectile(this.gameObject);
+        }
+
         position += _speed * Time.deltaTime;
 
         transform.position = position;

@@ -43,7 +43,6 @@ class sc_GunSelectorEditor : Editor
 
         if (GUILayout.Button("Implement") && playerAction == null)
         {
-            Debug.Log("It's alive: " + target.name);
             playerAction = monoBev.gameObject.AddComponent<sc_PlayerAction>();
             playerAction.GunSelector = ThisScript;
 
@@ -51,7 +50,7 @@ class sc_GunSelectorEditor : Editor
             GameObject defaultPivot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             ThisScript.GunParent = defaultPivot.transform;
         }
-        GenerateTooltip("Press to implement necessary elements for this object to use weapons; does nothing if playerAction componenet is already setup");
+        GenerateTooltip("Press to implement some of the necessary elements for this object to use weapons; does nothing if playerAction componenet is already setup");
 
         
         serializedObject.ApplyModifiedProperties(); //update component in the editor
