@@ -29,7 +29,8 @@ public class sc_ShootConfiguration : ScriptableObject
     [Tooltip("Whether or not you can hold down the mouse to continue firing")]
     public bool IsAutomatic = false;
 
-    [Tooltip("Maximum spread of the weapon")]
+    [Tooltip("Maximum spread of the weapon, affects both raycasts and projectiles (Note: Projectile Spread numbers must be higher to equal" +
+        " the same as raycasts)")]
     public Vector3 Spread = new Vector3(0.1f, 0.1f, 0.1f);
 
     [Tooltip("Set minimum time in seconds between each shot, this one probably didn't need a tooltip")]

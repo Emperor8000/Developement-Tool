@@ -17,9 +17,9 @@ MonoBehaviour:
     type: 3}
   Spawnpoint: {x: 0, y: 0, z: 0}
   SpawnRotation: {x: 90, y: 0, z: 0}
-  UseTrail: 0
+  UseTrail: 1
   UseParticle: 1
   ShootConfig: {fileID: 11400000, guid: 62d294bce2335c34f8db54076957e82d, type: 2}
-  TrailConfig: {fileID: 0}
+  TrailConfig: {fileID: 11400000, guid: de1b8daa4410bee4d8c7976d9dff27e1, type: 2}
   ImpactConfig: {fileID: 2772649217052399594, guid: 9d554ff37e7d0854a8f206798d39411c,
     type: 3}

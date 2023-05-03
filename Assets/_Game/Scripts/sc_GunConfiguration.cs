@@ -21,7 +21,7 @@ public class sc_GunConfiguration : ScriptableObject
     public Vector3 SpawnRotation = Vector3.zero;
 
     [Space]
-    [Tooltip("Use bullet trails?")]
+    [Tooltip("Use bullet trails? Doesn't affect projectiles, but a trail renderer can be added to the projectile prefab for this effect")]
     public bool UseTrail = true;
 
     [Tooltip("Play particle effect on shoot? Note: If false, particle system still necessary in order to know where to shoot from")]
@@ -108,8 +108,9 @@ public class sc_GunConfiguration : ScriptableObject
                         projectileLogic._gunConfig = this; //give it this script for impact purposes
                         projectileLogic.SetStuff(ShootConfig.ProjectileMissDuration);
 
-                        projectileLogic._speed = ShootParticle.gameObject.transform.forward * ShootConfig.ProjectileSpeed;
-                        //projectileLogic.damageAmount = _damageAmount;
+                        projectileLogic._speed = ShootParticle.gameObject.transform.forward * ShootConfig.ProjectileSpeed + new Vector3(Random.Range(-ShootConfig.Spread.x, ShootConfig.Spread.x),
+                    Random.Range(-ShootConfig.Spread.y, ShootConfig.Spread.y), Random.Range(-ShootConfig.Spread.z, ShootConfig.Spread.z));
+                        //projectileLogic.damageAmount = _damageAmount; an idea for damage effects
                     }
                 }
                 

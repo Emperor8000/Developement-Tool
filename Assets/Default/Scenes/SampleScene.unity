@@ -250,11 +250,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10a4d7de78f4a724088df686db25b6d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ActiveGunName: Rifle
+  ActiveGunName: Bazooka
   GunParent: {fileID: 1673494989}
-  Guns: []
-  allGuns: []
-  ActiveGun: {fileID: 11400000, guid: 2b217c9720ebb534abbf7ef7a29ea814, type: 2}
+  Guns:
+  - {fileID: 11400000, guid: 102fb06171a1fce48838a9719fefd143, type: 2}
+  - {fileID: 11400000, guid: 10299f5904d484344afcf0d453be88cb, type: 2}
+  - {fileID: 11400000, guid: 2b217c9720ebb534abbf7ef7a29ea814, type: 2}
+  ActiveGun: {fileID: 11400000, guid: 102fb06171a1fce48838a9719fefd143, type: 2}
 --- !u!4 &256335547
 Transform:
   m_ObjectHideFlags: 0

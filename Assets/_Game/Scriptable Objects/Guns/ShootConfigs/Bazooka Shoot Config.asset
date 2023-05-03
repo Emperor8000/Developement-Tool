@@ -17,10 +17,10 @@ MonoBehaviour:
   ProjectilePrefab: {fileID: 7627370783196518347, guid: a3bce2a70a22c224a95a7a6fb22d6eaa,
     type: 3}
   ProjectileSpeed: 20
-  ProjectileMissDuration: 20
+  ProjectileMissDuration: 5
   HitMask:
     serializedVersion: 2
     m_Bits: 2147483647
   IsAutomatic: 0
-  Spread: {x: 0.1, y: 0.1, z: 0.1}
-  FireRate: 1.5
+  Spread: {x: 2, y: 2, z: 2}
+  FireRate: 1

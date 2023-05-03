@@ -32,7 +32,7 @@ class sc_GunSelectorEditor : Editor
         GenerateTooltip("The object whose transform is used when spawning weapons (note: weapon spawn variables add to this transform)");
 
         EditorGUILayout.PropertyField(Guns);
-        GenerateTooltip("List of weapons");
+        GenerateTooltip("List of weapons: must add all weapons you want this object to use in order for it to work right");
 
         
 
