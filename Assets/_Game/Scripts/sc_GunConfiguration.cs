@@ -81,6 +81,13 @@ public class sc_GunConfiguration : ScriptableObject
                 {
                     if (Physics.Raycast(ShootParticle.transform.position, shootDirection, out RaycastHit hit, float.MaxValue, ShootConfig.HitMask))
                     {
+                        sc_Shootable shootableObject = hit.transform.gameObject.GetComponent<sc_Shootable>();
+
+                        if(shootableObject != null)
+                        {
+                            shootableObject.shoot(ShootConfig.Damage);
+                        }
+
                         if (UseTrail)
                         {
                             ActiveMonoBehavior.StartCoroutine(PlayTrail(ShootParticle.transform.position, hit.point, hit));
@@ -106,7 +113,7 @@ public class sc_GunConfiguration : ScriptableObject
 
                         sc_Projectile projectileLogic = instance.GetComponent<sc_Projectile>(); //get the projectile script from the projectile
                         projectileLogic._gunConfig = this; //give it this script for impact purposes
-                        projectileLogic.SetStuff(ShootConfig.ProjectileMissDuration);
+                        projectileLogic.SetStuff(ShootConfig.ProjectileMissDuration, ShootConfig.Damage);
 
                         projectileLogic._speed = ShootParticle.gameObject.transform.forward * ShootConfig.ProjectileSpeed + new Vector3(Random.Range(-ShootConfig.Spread.x, ShootConfig.Spread.x),
                     Random.Range(-ShootConfig.Spread.y, ShootConfig.Spread.y), Random.Range(-ShootConfig.Spread.z, ShootConfig.Spread.z));

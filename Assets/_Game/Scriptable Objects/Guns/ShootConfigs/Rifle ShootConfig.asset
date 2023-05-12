@@ -12,11 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47eb39be26b1dec4bbd8f63378974cdf, type: 3}
   m_Name: Rifle ShootConfig
   m_EditorClassIdentifier: 
-  Raycast: 1
-  Projectile: 0
+  Raycast: 0
+  Projectile: 1
+  ProjectilePrefab: {fileID: 7627370783196518347, guid: a3bce2a70a22c224a95a7a6fb22d6eaa,
+    type: 3}
+  ProjectileSpeed: 20
+  ProjectileMissDuration: 20
   HitMask:
     serializedVersion: 2
     m_Bits: 2147483647
-  IsAutomatic: 1
+  IsAutomatic: 0
   Spread: {x: 0.1, y: 0.1, z: 0.1}
-  FireRate: 0.1
+  FireRate: 2

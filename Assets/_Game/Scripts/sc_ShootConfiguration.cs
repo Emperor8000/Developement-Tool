@@ -7,6 +7,9 @@ public class sc_ShootConfiguration : ScriptableObject
     [Header("Choose gun logic/behavior")]
     [Space]
 
+    [Tooltip("How much damage per hit the weapon inflicts")]
+    public int Damage = 1;
+
     [Tooltip("Whether the weapon shoots raycasts")]
     public bool Raycast = true;
 
