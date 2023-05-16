@@ -28,7 +28,16 @@ public class sc_GunSelector : MonoBehaviour
 
         if (gun != null)
         {
-            gun.Spawn(GunParent, this);
+            GameObject previousGun = GameObject.Find(gun.name + "(Clone)"); //search for a previous gun of this type
+
+            if (!previousGun)
+            {
+                gun.Spawn(GunParent, this);
+            }
+            else
+            {
+                gun.Setup(GunParent, this, previousGun);
+            }
         }
     }
 

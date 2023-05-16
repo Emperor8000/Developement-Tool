@@ -60,7 +60,23 @@ public class sc_GunConfiguration : ScriptableObject
 
         ShootParticle = Model.GetComponentInChildren<ParticleSystem>();
     }
-    
+
+    public void Setup(Transform Parent, MonoBehaviour ActiveMonoBehavior, GameObject Model) //function to link and setup an existing weapon model
+    {
+        this.ActiveMonoBehavior = ActiveMonoBehavior;
+        LastShootTime = 0;
+        TrailPool = new ObjectPool<TrailRenderer>(CreateTrail);
+        ImpactParticlePool = new ObjectPool<ParticleSystem>(CreateParticle);
+        ProjectilePool = new ObjectPool<GameObject>(CreateProjectile);
+
+
+        Model.transform.SetParent(Parent, false);
+        Model.transform.localPosition = Spawnpoint;
+        Model.transform.localRotation = Quaternion.Euler(SpawnRotation);
+
+        ShootParticle = Model.GetComponentInChildren<ParticleSystem>();
+    }
+
     public void Shoot()
     {
         if(Time.time > ShootConfig.FireRate + LastShootTime)
